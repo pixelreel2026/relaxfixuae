@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>RELAX FIX PRO – AI Studio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #050816;
+      --card: #0b1020;
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.15);
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --border: #1f2933;
+      --danger: #f97373;
+    }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #1f2937 0, #020617 45%, #000 100%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 24px 12px;
+    }
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      background: linear-gradient(135deg, rgba(15,23,42,0.96), rgba(3,7,18,0.98));
+      border-radius: 24px;
+      border: 1px solid rgba(148,163,184,0.25);
+      box-shadow:
+        0 40px 80px rgba(0,0,0,0.75),
+        0 0 0 1px rgba(15,23,42,0.9);
+      padding: 20px;
+    }
+    @media (min-width: 768px) {
+      .container { padding: 28px 32px; }
+    }
+    .header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(15,118,110,0.15);
+      border: 1px solid rgba(45,212,191,0.4);
+      color: #a5f3fc;
+      font-size: 12px;
+    }
+    .badge span.icon {
+      font-size: 14px;
+    }
+    .title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .title span.brand {
+      background: linear-gradient(120deg, #22c55e, #a855f7, #38bdf8);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 620px;
+      line-height: 1.7;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .pill {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.35);
+      color: #e5e7eb;
+      background: radial-gradient(circle at top left, rgba(148,163,184,0.25), transparent 55%);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.1fr 1.1fr;
+      gap: 16px;
+    }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .tabs-card {
+      background: radial-gradient(circle at top, rgba(15,23,42,0.9), rgba(15,23,42,0.98));
+      border-radius: 18px;
+      border: 1px solid rgba(55,65,81,0.9);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    .tabs-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.12), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(34,197,94,0.12), transparent 55%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .tabs-header {
+      display: flex;
+      gap: 6px;
+      position: relative;
+      z-index: 1;
+    }
+    .tab-btn {
+      flex: 1;
+      border-radius: 999px;
+      border: 1px solid rgba(75,85,99,0.9);
+      padding: 7px 10px;
+      background: rgba(15,23,42,0.9);
+      color: #e5e7eb;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.18s ease-out;
+      white-space: nowrap;
+    }
+    .tab-btn span.icon { font-size: 14px; }
+    .tab-btn.active {
+      background: radial-gradient(circle at top, rgba(34,197,94,0.18), rgba(15,23,42,0.98));
+      border-color: rgba(34,197,94,0.9);
+      box-shadow:
+        0 0 0 1px rgba(34,197,94,0.4),
+        0 10px 25px rgba(22,163,74,0.35);
+      color: #bbf7d0;
+    }
+    .form-body {
+      position: relative;
+      z-index: 1;
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .field label {
+      font-size: 12px;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .field small {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .input, .select, .textarea {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(55,65,81,0.9);
+      background: rgba(15,23,42,0.96);
+      color: #e5e7eb;
+      padding: 7px 9px;
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.16s ease-out, box-shadow 0.16s ease-out, background 0.16s ease-out;
+    }
+    .input:focus, .select:focus, .textarea:focus {
+      border-color: rgba(34,197,94,0.9);
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.5);
+      background: rgba(15,23,42,0.98);
+    }
+    .textarea {
+      min-height: 90px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 4px;
+    }
+    .btn-primary {
+      border-radius: 999px;
+      border: none;
+      padding: 7px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      background: radial-gradient(circle at top left, #22c55e, #16a34a);
+      color: #022c22;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow:
+        0 12px 30px rgba(22,163,74,0.55),
+        0 0 0 1px rgba(21,128,61,0.7);
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, filter 0.12s ease-out;
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow:
+        0 16px 40px rgba(22,163,74,0.7),
+        0 0 0 1px rgba(21,128,61,0.9);
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: wait;
+      transform: none;
+      box-shadow: none;
+    }
+    .btn-secondary {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.6);
+      padding: 6px 12px;
+      font-size: 11px;
+      background: rgba(15,23,42,0.9);
+      color: #e5e7eb;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hint {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .output-card {
+      background: radial-gradient(circle at top, rgba(15,23,42,0.96), rgba(15,23,42,1));
+      border-radius: 18px;
+      border: 1px solid rgba(55,65,81,0.9);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .output-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0 0, rgba(56,189,248,0.12), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(168,85,247,0.12), transparent 55%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .output-header {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .output-title {
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .output-title span.icon { font-size: 15px; }
+    .output-meta {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .output-body {
+      position: relative;
+      z-index: 1;
+      border-radius: 12px;
+      background: rgba(15,23,42,0.96);
+      border: 1px solid rgba(55,65,81,0.9);
+      padding: 10px;
+      min-height: 140px;
+      font-size: 12px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      color: #e5e7eb;
+      overflow-y: auto;
+      max-height: 320px;
+    }
+    .output-placeholder {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .status span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.25);
+    }
+    .status.error span.dot {
+      background: var(--danger);
+      box-shadow: 0 0 0 4px rgba(248,113,113,0.25);
+    }
+    .status span.label {
+      color: #e5e7eb;
+    }
+    .status span.sub {
+      color: var(--muted);
+    }
+    .chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .chip {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.6);
+      color: #e5e7eb;
+      background: rgba(15,23,42,0.9);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="badge">
+        <span class="icon">🤖</span>
+        <span>RELAX FIX PRO · AI Studio</span>
+      </div>
+      <div class="title">
+        <span>استوديو الذكاء الاصطناعي</span>
+        <span class="brand">للصيانة والتسويق في أبوظبي</span>
+      </div>
+      <p class="subtitle">
+        لوحة تحكم ذكية تساعدك على تشخيص الأعطال، كتابة إعلانات احترافية، وتحسين تقديرات التكاليف
+        – كلها بالعربية، ومهيأة لسوق أبوظبي والإمارات.
+      </p>
+      <div class="pill-row">
+        <div class="pill">تشخيص أعطال فني 🔧</div>
+        <div class="pill">إعلانات سوشيال جاهزة للنشر 📣</div>
+        <div class="pill">تحسين تقديرات التكاليف 💰</div>
+        <div class="pill">تكامل مباشر مع Google Gemini</div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <!-- LEFT: FORM -->
+      <section class="tabs-card">
+        <div class="tabs-header">
+          <button class="tab-btn active" data-tab="diagnose">
+            <span class="icon">🩺</span>
+            <span>تشخيص الأعطال</span>
+          </button>
+          <button class="tab-btn" data-tab="marketing">
+            <span class="icon">📣</span>
+            <span>إعلانات وتسويق</span>
+          </button>
+          <button class="tab-btn" data-tab="estimate">
+            <span class="icon">📊</span>
+            <span>تحسين التقدير</span>
+          </button>
+        </div>
+
+        <!-- Diagnose -->
+        <div class="form-body" data-panel="diagnose">
+          <div class="field">
+            <label>
+              <span>وصف المشكلة</span>
+              <small>اشرح المشكلة كما يصفها العميل</small>
+            </label>
+            <textarea id="diagnose-issue" class="textarea" placeholder="مثال: المكيف لا يبرد، يصدر صوت غريب، ورائحة غير طبيعية من الوحدة الداخلية..."></textarea>
+          </div>
+          <div class="actions-row">
+            <button id="btn-diagnose" class="btn-primary">
+              <span>تشخيص ذكي الآن</span>
+              <span>⚡</span>
+            </button>
+            <button type="button" class="btn-secondary" id="btn-diagnose-example">
+              مثال جاهز
+            </button>
+          </div>
+          <p class="hint">
+            سيقوم النظام بتحليل المشكلة، اقتراح الأسباب المحتملة، والخطوات التي يمكن تنفيذها قبل إرسال فني.
+          </p>
+        </div>
+        <!-- Marketing -->
+        <div class="form-body" data-panel="marketing" style="display:none;">
+          <div class="field">
+            <label>
+              <span>اسم الخدمة</span>
+              <small>ما هي الخدمة التي تريد الإعلان عنها؟</small>
+            </label>
+            <input id="mkt-service" class="input" placeholder="مثال: صيانة التكييف في أبوظبي" />
+          </div>
+          <div class="field">
+            <label>
+              <span>المنصة المستهدفة</span>
+              <small>اختر المنصة الأساسية</small>
+            </label>
+            <select id="mkt-platform" class="select">
+              <option value="">اختر المنصة</option>
+              <option value="Instagram">إنستغرام</option>
+              <option value="TikTok">تيك توك</option>
+              <option value="Facebook">فيسبوك</option>
+              <option value="Google Ads">إعلانات جوجل</option>
+              <option value="Snapchat">سناب شات</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>
+              <span>الميزانية (اختياري)</span>
+            </label>
+            <input id="mkt-budget" class="input" placeholder="مثال: 1500 AED شهريًا" />
+          </div>
+          <div class="field">
+            <label>
+              <span>نبرة الإعلان</span>
+            </label>
+            <select id="mkt-tone" class="select">
+              <option value="">افتراضي: احترافية وودية</option>
+              <option value="فاخرة ومميزة">فاخرة ومميزة</option>
+              <option value="سريعة وعملية">سريعة وعملية</option>
+              <option value="عائلية ودافئة">عائلية ودافئة</option>
+              <option value="عاجلة ومحدودة">عاجلة ومحدودة</option>
+            </select>
+          </div>
+          <div class="actions-row">
+            <button id="btn-marketing" class="btn-primary">
+              <span>توليد إعلان جاهز</span>
+              <span>📣</span>
+            </button>
+            <button type="button" class="btn-secondary" id="btn-marketing-example">
+              مثال جاهز
+            </button>
+          </div>
+          <p class="hint">
+            ستحصل على نص إعلان كامل + هاشتاجات جاهزة للنشر على المنصة التي تختارها.
+          </p>
+        </div>
+
+        <!-- Estimate -->
+        <div class="form-body" data-panel="estimate" style="display:none;">
+          <div class="field">
+            <label>
+              <span>نوع الخدمة</span>
+              <small>مثال: دهانات داخلية، تركيب رخام...</small>
+            </label>
+            <input id="est-service" class="input" placeholder="مثال: دهانات داخلية لشقة 3 غرف" />
+          </div>
+          <div class="field">
+            <label>
+              <span>المساحة التقريبية (م²)</span>
+            </label>
+            <input id="est-area" class="input" placeholder="مثال: 120" />
+          </div>
+          <div class="field">
+            <label>
+              <span>مستوى الجودة</span>
+            </label>
+            <select id="est-quality" class="select">
+              <option value="">افتراضي: معياري</option>
+              <option value="اقتصادي">اقتصادي</option>
+              <option value="معياري">معياري</option>
+              <option value="فاخر">فاخر</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>
+              <span>التكلفة الحالية (AED)</span>
+              <small>التقدير الحالي الذي تريد تحسينه</small>
+            </label>
+            <input id="est-current" class="input" placeholder="مثال: 8500" />
+          </div>
+          <div class="field">
+            <label>
+              <span>متطلبات خاصة (اختياري)</span>
+            </label>
+            <textarea id="est-req" class="textarea" placeholder="مثال: ألوان معينة، مواد صديقة للبيئة، وقت تنفيذ محدد..."></textarea>
+          </div>
+          <div class="actions-row">
+            <button id="btn-estimate" class="btn-primary">
+              <span>تحليل وتحسين التقدير</span>
+              <span>📊</span>
+            </button>
+            <button type="button" class="btn-secondary" id="btn-estimate-example">
+              مثال جاهز
+            </button>
+          </div>
+          <p class="hint">
+            ستحصل على تحليل للتكلفة الحالية + اقتراحات لتوفير التكاليف مع الحفاظ على الجودة.
+          </p>
+        </div>
+      </section>
+      <!-- RIGHT: OUTPUT -->
+      <section class="output-card">
+        <div class="output-header">
+          <div class="output-title">
+            <span class="icon">✨</span>
+            <span id="output-title">نتيجة الذكاء الاصطناعي</span>
+          </div>
+          <div class="output-meta">
+            <span>مدعوم بـ Google Gemini</span>
+            <span>مهيأ لسوق أبوظبي</span>
+          </div>
+        </div>
+
+        <div id="output" class="output-body">
+          <div class="output-placeholder">
+            <span>ابدأ باختيار نوع الأداة من اليسار، ثم اكتب التفاصيل واضغط على زر التوليد.</span>
+          </div>
+        </div>
+
+        <div class="status" id="status">
+          <span class="dot"></span>
+          <span class="label">جاهز</span>
+          <span class="sub">في انتظار إدخالك…</span>
+        </div>
+
+        <div class="chips-row">
+          <div class="chip">لا يتم حفظ أي بيانات حساسة</div>
+          <div class="chip">مناسب للفرق الفنية وخدمة العملاء</div>
+          <div class="chip">يمكن استخدام النص مباشرة مع العملاء</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll(".tab-btn");
+    const panels = document.querySelectorAll("[data-panel]");
+    const outputEl = document.getElementById("output");
+    const statusEl = document.getElementById("status");
+    const outputTitleEl = document.getElementById("output-title");
+
+    let currentMode = "diagnose";
+    let isLoading = false;
+
+    function setStatus({ mode = "ready", message = "", sub = "" }) {
+      statusEl.classList.remove("error");
+      const dot = statusEl.querySelector(".dot");
+      const label = statusEl.querySelector(".label");
+      const subEl = statusEl.querySelector(".sub");
+
+      if (mode === "ready") {
+        dot.style.background = "#22c55e";
+        dot.style.boxShadow = "0 0 0 4px rgba(34,197,94,0.25)";
+        label.textContent = "جاهز";
+        subEl.textContent = sub || "في انتظار إدخالك…";
+      } else if (mode === "loading") {
+        dot.style.background = "#38bdf8";
+        dot.style.boxShadow = "0 0 0 4px rgba(56,189,248,0.25)";
+        label.textContent = "جاري المعالجة…";
+        subEl.textContent = sub || "قد يستغرق الأمر بضع ثوانٍ.";
+      } else if (mode === "error") {
+        statusEl.classList.add("error");
+        dot.style.background = "#f97373";
+        dot.style.boxShadow = "0 0 0 4px rgba(248,113,113,0.25)";
+        label.textContent = "خطأ";
+        subEl.textContent = sub || message || "حدث خطأ غير متوقع.";
+      }
+    }
+
+    function setOutput(text) {
+      outputEl.innerHTML = "";
+      const pre = document.createElement("div");
+      pre.textContent = text;
+      outputEl.appendChild(pre);
+    }
+
+    tabs.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const tab = btn.dataset.tab;
+        currentMode = tab;
+        tabs.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        panels.forEach((p) => {
+          p.style.display = p.dataset.panel === tab ? "flex" : "none";
+        });
+
+        if (tab === "diagnose") {
+          outputTitleEl.textContent = "تشخيص فني للمشكلة";
+          setStatus({ mode: "ready", sub: "اشرح المشكلة وسيتم توليد تشخيص فني." });
+        } else if (tab === "marketing") {
+          outputTitleEl.textContent = "نص إعلان جاهز للنشر";
+          setStatus({ mode: "ready", sub: "أدخل تفاصيل الخدمة والمنصة وسيتم توليد إعلان كامل." });
+        } else {
+          outputTitleEl.textContent = "تحليل وتحسين تقدير التكلفة";
+          setStatus({ mode: "ready", sub: "أدخل التقدير الحالي وسيتم اقتراح تحسينات عملية." });
+        }
+      });
+    });
+    async function callApi(url, body) {
+      if (isLoading) return;
+      isLoading = true;
+      setStatus({ mode: "loading" });
+
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || "فشل الاتصال بالخادم");
+        }
+
+        const data = await res.json();
+        isLoading = false;
+        setStatus({ mode: "ready", sub: "تم التوليد بنجاح ✅" });
+        return data;
+      } catch (err) {
+        console.error(err);
+        isLoading = false;
+        setStatus({ mode: "error", message: err.message, sub: err.message });
+        setOutput("حدث خطأ أثناء الاتصال بنظام الذكاء الاصطناعي:\n\n" + err.message);
+        throw err;
+      }
+    }
+
+    document.getElementById("btn-diagnose").addEventListener("click", async () => {
+      const issue = document.getElementById("diagnose-issue").value.trim();
+      if (!issue) {
+        setStatus({ mode: "error", message: "يرجى وصف المشكلة أولاً." });
+        return;
+      }
+      setOutput("جاري تحليل المشكلة وتشخيصها...\n\nالرجاء الانتظار.");
+      const data = await callApi("/api/ai/diagnose", { issue_description: issue }).catch(() => null);
+      if (!data || !data.success) return;
+      setOutput(data.diagnosis || "لم يتم استلام نص من نظام الذكاء الاصطناعي.");
+    });
+
+    document.getElementById("btn-marketing").addEventListener("click", async () => {
+      const service = document.getElementById("mkt-service").value.trim();
+      const platform = document.getElementById("mkt-platform").value.trim();
+      const budget = document.getElementById("mkt-budget").value.trim();
+      const tone = document.getElementById("mkt-tone").value.trim();
+
+      if (!service || !platform) {
+        setStatus({ mode: "error", message: "اسم الخدمة والمنصة مطلوبان." });
+        return;
+      }
+
+      setOutput("جاري توليد نص الإعلان...\n\nالرجاء الانتظار.");
+      const data = await callApi("/api/ai/marketing", {
+        service_name: service,
+        target_platform: platform,
+        budget,
+        tone,
+      }).catch(() => null);
+      if (!data || !data.success) return;
+      setOutput(data.ad_copy || "لم يتم استلام نص من نظام الذكاء الاصطناعي.");
+    });
+
+    document.getElementById("btn-estimate").addEventListener("click", async () => {
+      const service_type = document.getElementById("est-service").value.trim();
+      const area_size = document.getElementById("est-area").value.trim();
+      const quality_level = document.getElementById("est-quality").value.trim();
+      const current_estimate = document.getElementById("est-current").value.trim();
+      const requirements = document.getElementById("est-req").value.trim();
+
+      if (!service_type || !current_estimate) {
+        setStatus({ mode: "error", message: "نوع الخدمة والتكلفة الحالية مطلوبان." });
+        return;
+      }
+
+      setOutput("جاري تحليل التقدير الحالي واقتراح تحسينات...\n\nالرجاء الانتظار.");
+      const data = await callApi("/api/ai/estimate-optimizer", {
+        service_type,
+        area_size,
+        quality_level,
+        current_estimate,
+        requirements,
+      }).catch(() => null);
+      if (!data || !data.success) return;
+      setOutput(data.optimization || "لم يتم استلام نص من نظام الذكاء الاصطناعي.");
+    });
+
+    document.getElementById("btn-diagnose-example").addEventListener("click", () => {
+      document.getElementById("diagnose-issue").value =
+        "المكيف في غرفة المعيشة لا يبرد جيدًا، يصدر صوت اهتزاز خفيف، " +
+        "وأحيانًا يخرج منه رائحة غير مريحة بعد التشغيل بـ 10 دقائق.";
+    });
+
+    document.getElementById("btn-marketing-example").addEventListener("click", () => {
+      document.getElementById("mkt-service").value = "صيانة التكييف الشاملة في أبوظبي";
+      document.getElementById("mkt-platform").value = "Instagram";
+      document.getElementById("mkt-budget").value = "2000 AED شهريًا";
+      document.getElementById("mkt-tone").value = "فاخرة ومميزة";
+    });
+
+    document.getElementById("btn-estimate-example").addEventListener("click", () => {
+      document.getElementById("est-service").value = "دهانات داخلية لشقة 3 غرف وصالة";
+      document.getElementById("est-area").value = "130";
+      document.getElementById("est-quality").value = "فاخر";
+      document.getElementById("est-current").value = "9500";
+      document.getElementById("est-req").value =
+        "ألوان هادئة، دهان قابل للغسيل، تنفيذ خلال 5 أيام قبل الانتقال.";
+    });
+  </script>
+</body>
+</html>
